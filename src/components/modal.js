@@ -21,5 +21,4 @@ function closeModalEsc(evt) {
   }
 }
 
-
 export {closeModalEsc, closeModalOverlay, openModal, closeModal};
