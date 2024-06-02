@@ -21,4 +21,4 @@ function closeModalEsc(evt) {
   }
 }
 
-export {closeModalEsc, closeModalOverlay, openModal, closeModal};
+export {closeModalOverlay, openModal, closeModal};
