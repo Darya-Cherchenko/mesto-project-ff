@@ -19,8 +19,6 @@ const nameCard = formPlace.querySelector('.popup__input_type_card-name');
 const urlCard = formPlace.querySelector('.popup__input_type_url');
 const titleProfile = document.querySelector('.profile__title');
 const descriptionProfile = document.querySelector('.profile__description');
-const popupButton = document.querySelector('.popup__button');
-const popupImage = document.querySelector('.popup_type_image');
 const bigImage = document.querySelector('.popup__image');
 const titleImagePopup = document.querySelector('.popup__caption');
 
@@ -28,7 +26,9 @@ function handleFormEditSubmit(evt) {
   evt.preventDefault(); 
 
   titleProfile.textContent = nameInput.value;
-  descriptionProfile.textContent = jobInput.value;  
+  descriptionProfile.textContent = jobInput.value; 
+  
+  closeModal(editPopup);
 }
 formProfile.addEventListener('submit', handleFormEditSubmit); 
 
@@ -44,6 +44,8 @@ function addNewCard(evt) {
   cardsContainer.prepend(newCard);
 
   formPlace.reset();
+
+  closeModal(newPlacePopup);
 }
 formPlace.addEventListener('submit', addNewCard); 
 
@@ -52,7 +54,7 @@ const openCard = (image)=>{
   bigImage.alt = image.name;
   titleImagePopup.textContent = image.name;
   
-  openModal(popupImage);
+  openModal(imagePopup);
 }
 
 function renderInitialCards(cards) {
@@ -70,10 +72,6 @@ editButton.addEventListener('click', function(){
 });
 
 editPopup.addEventListener('click', closeModalOverlay);
-
-popupButton.addEventListener('click', (evt)=>{
-  closeModal(evt.target.closest('.popup_is-opened'));
-});
 
 newPlaceButton.addEventListener('click', function(){
   openModal(newPlacePopup);
