@@ -1,0 +1,12 @@
+.popup__input_type_error {
+  border-bottom: 1px solid #f00;
+}
+
+.popup__error_visible {
+  visibility: visible;
+  display: block;
+  color: #f00;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}

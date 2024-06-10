@@ -2,6 +2,8 @@ import './pages/index.css';
 import { initialCards } from './components/cards.js';
 import { createCard, deleteCard, likeCard } from './components/card.js';
 import { closeModalOverlay, openModal, closeModal } from './components/modal.js';
+import { enableValidation, clearValidation, validationConfig } from './components/validation.js';
+import { userGet, getInitialCards, cardsGet, cardsPost, userPatch, cardsDelete, addLike, deleteLike, avatarPatch  } from './components/api.js';
 
 const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
@@ -21,6 +23,11 @@ const titleProfile = document.querySelector('.profile__title');
 const descriptionProfile = document.querySelector('.profile__description');
 const bigImage = document.querySelector('.popup__image');
 const titleImagePopup = document.querySelector('.popup__caption');
+const userImage = document.querySelector('.profile__image');
+
+enableValidation(validationConfig);
+
+
 
 function handleFormEditSubmit(evt) {
   evt.preventDefault(); 
@@ -63,9 +70,9 @@ function renderInitialCards(cards) {
     cardsContainer.append(card); 
   });
 }
-renderInitialCards(initialCards);
 
 editButton.addEventListener('click', function(){
+    clearValidation(formProfile);
     openModal(editPopup);
     nameInput.value = titleProfile.textContent;
     jobInput.value = descriptionProfile.textContent; 
@@ -74,6 +81,7 @@ editButton.addEventListener('click', function(){
 editPopup.addEventListener('click', closeModalOverlay);
 
 newPlaceButton.addEventListener('click', function(){
+  clearValidation(formPlace);
   openModal(newPlacePopup);
 });
 
@@ -87,3 +95,23 @@ closeButtons.forEach((button) =>{
   closeModal(parentPopup);
   });
 });
+
+const userId = '';
+function userInfo(user) {
+  titleProfile.textContent = user.name;
+  descriptionProfile.textContent = user.about;
+  userImage.setAttribute("style", `background-image: url('${user.avatar}')`);
+  // userId = user._id;
+}
+
+Promise.all([userGet(), cardsGet()])
+  .then(([user, cards]) => {
+    titleProfile.textContent = user.name;
+    descriptionProfile.textContent = user.about;
+    user.avatar;
+    renderInitialCards(cards);
+  })
+  .catch((err) => {
+    console.log("Ошибка - данные не получены", err);
+  });
+  
