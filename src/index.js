@@ -3,7 +3,7 @@ import { initialCards } from './components/cards.js';
 import { createCard, deleteCard, likeCard } from './components/card.js';
 import { closeModalOverlay, openModal, closeModal } from './components/modal.js';
 import { enableValidation, clearValidation, validationConfig } from './components/validation.js';
-import { userGet, getInitialCards, cardsGet, cardsPost, userPatch, cardsDelete, addLike, deleteLike, avatarPatch  } from './components/api.js';
+import { userGet, cardsGet, cardsPost, userPatch, cardsDelete, avatarPatch  } from './components/api.js';
 
 const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
@@ -13,6 +13,8 @@ const content = document.querySelector('.content');
 const cardsContainer = content.querySelector('.places__list');
 const formProfile = document.forms['edit-profile'];
 const formPlace = document.forms['new-place'];
+const formDeleteCard = document.forms['delete-card'];
+const formAvatar = document.forms['avatar'];
 const imagePopup = document.querySelector('.popup_type_image');
 const closeButtons = document.querySelectorAll('.popup__close');
 const nameInput = formProfile.querySelector('.popup__input_type_name');
@@ -24,37 +26,16 @@ const descriptionProfile = document.querySelector('.profile__description');
 const bigImage = document.querySelector('.popup__image');
 const titleImagePopup = document.querySelector('.popup__caption');
 const userImage = document.querySelector('.profile__image');
+const avatarPopup = document.querySelector('.popup_type_avatar');
+const deletePopup = document.querySelector('.popup_type_delete-card');
+
+let userId = ' ';
 
 enableValidation(validationConfig);
 
-
-
-function handleFormEditSubmit(evt) {
-  evt.preventDefault(); 
-
-  titleProfile.textContent = nameInput.value;
-  descriptionProfile.textContent = jobInput.value; 
-  
-  closeModal(editPopup);
-}
-formProfile.addEventListener('submit', handleFormEditSubmit); 
-
-function addNewCard(evt) {
-  evt.preventDefault(); 
-
-  const newCardData = {
-    name: nameCard.value,
-    link: urlCard.value
-  }
-  
-  const newCard = createCard(newCardData, deleteCard, likeCard, openCard);
-  cardsContainer.prepend(newCard);
-
-  formPlace.reset();
-
-  closeModal(newPlacePopup);
-}
-formPlace.addEventListener('submit', addNewCard); 
+const loading = (isLoading, button) => {
+  button.textContent = isLoading ? "Сохранение..." : "Сохранить";
+};
 
 const openCard = (image)=>{
   bigImage.src = image.link;
@@ -64,9 +45,75 @@ const openCard = (image)=>{
   openModal(imagePopup);
 }
 
+function handleFormEditSubmit(evt) {
+  evt.preventDefault(); 
+  loading(true, formProfile.querySelector(".popup__button"));
+  userPatch({
+    name: nameInput.value,
+    about: jobInput.value
+  })
+  .then((updateUserInfo) => {
+    titleProfile.textContent = updateUserInfo.name;
+    descriptionProfile.textContent = updateUserInfo.about; 
+    
+    closeModal(editPopup);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    loading(false, formProfile.querySelector(".popup__button"));
+  });
+}
+formProfile.addEventListener('submit', handleFormEditSubmit); 
+
+function handleFormAvatarSubmit(evt) {
+  evt.preventDefault(); 
+  loading(true, formAvatar.querySelector(".popup__button"));
+  avatarPatch(formAvatar.link.value)
+  .then((updateAvatar) => {
+    userImage.style.background = `url(${updateAvatar.avatar})`;
+    
+    closeModal(avatarPopup);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    loading(false, formAvatar.querySelector(".popup__button"));
+  });
+}
+formAvatar.addEventListener('submit', handleFormAvatarSubmit); 
+
+function addNewCard(evt) {
+  evt.preventDefault(); 
+  loading(true, formPlace.querySelector(".popup__button"));
+  const newCardData = {
+    name: nameCard.value,
+    link: urlCard.value
+  }
+
+  cardsPost(newCardData)
+  .then((cardInfo) => {
+    const newCard = createCard(cardInfo, userId, deleteCard, likeCard, openCard);
+    cardsContainer.prepend(newCard);
+  
+    formPlace.reset();
+  
+    closeModal(newPlacePopup);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    loading(false, formPlace.querySelector(".popup__button"));
+  }); 
+}
+formPlace.addEventListener('submit', addNewCard); 
+
 function renderInitialCards(cards) {
   cards.forEach((data) => {
-    const card = createCard(data, deleteCard, likeCard, openCard);
+    const card = createCard(data, userId, deleteCard, likeCard, openCard);
     cardsContainer.append(card); 
   });
 }
@@ -85,9 +132,36 @@ newPlaceButton.addEventListener('click', function(){
   openModal(newPlacePopup);
 });
 
+userImage.addEventListener('click', () => {
+  clearValidation(formAvatar);
+  openModal(avatarPopup);
+})
+
+avatarPopup.addEventListener('click', closeModalOverlay);
+
 newPlacePopup.addEventListener('click', closeModalOverlay);
 
 imagePopup.addEventListener('click', closeModalOverlay);
+
+deletePopup.addEventListener('click', closeModalOverlay);
+
+function deleteMyCard (evt) {
+  evt.preventDefault(); 
+
+  cardsDelete(deletePopup.dataset.cardId)
+  .then(() => {
+    const card = document.querySelector(
+      `[data-card-id="${deletePopup.dataset.cardId}"]`,
+    );
+    console.log(card);
+    card.remove();
+    closeModal(deletePopup);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+}
+formDeleteCard.addEventListener('submit', deleteMyCard);
 
 closeButtons.forEach((button) =>{
   const parentPopup = button.closest('.popup');
@@ -96,19 +170,12 @@ closeButtons.forEach((button) =>{
   });
 });
 
-const userId = '';
-function userInfo(user) {
-  titleProfile.textContent = user.name;
-  descriptionProfile.textContent = user.about;
-  userImage.setAttribute("style", `background-image: url('${user.avatar}')`);
-  // userId = user._id;
-}
-
 Promise.all([userGet(), cardsGet()])
   .then(([user, cards]) => {
+    userId = user._id;
     titleProfile.textContent = user.name;
     descriptionProfile.textContent = user.about;
-    user.avatar;
+    userImage.style.background = `url(${user.avatar})`;
     renderInitialCards(cards);
   })
   .catch((err) => {

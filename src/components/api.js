@@ -6,88 +6,119 @@ const config = {
   }
 }
 
-const url = {
-  cards: 'cards',
-  users: 'users/me',
-  likes: 'likes',
-  avatar: 'avatar',
-}
-
-const getInitialCards = (api, option) => {
-  return fetch(`${config.baseUrl}/${api}`, option)
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    });
-} 
-
 function userGet() {
-  return getInitialCards(`${config.baseUrl}/${url.users}`, {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: 'GET', 
     headers: config.headers
+  })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 }
 
 function cardsGet() {
-  return getInitialCards(`${config.baseUrl}/${url.cards}`, {
+  return fetch(`${config.baseUrl}/cards`, {
     method: 'GET', 
     headers: config.headers
+  })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 }
 
-function userPatch(name, about) {
-  return getInitialCards(`${config.baseUrl}/users/me`, {
+function userPatch(userInfo) {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH', 
     headers: config.headers,
     body: JSON.stringify({
-      name,
-      about
+      name: userInfo.name,
+      about: userInfo.about
     })
   })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 }
 
-function cardsPost(name, link) {
-  return getInitialCards(`${config.baseUrl}/cards`, {
+function cardsPost(cardInfo) {
+  return fetch(`${config.baseUrl}/cards`, {
     method: 'POST', 
     headers: config.headers,
     body: JSON.stringify({
-      name,
-      link,
+      name: cardInfo.name,
+      link: cardInfo.link
     })
+  })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 }
 
 function addLike(id) {
-  return getInitialCards(`${config.baseUrl}/cards/likes/${id}`, {
+  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
     method: 'PUT', 
     headers: config.headers
   })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 }
 
 function cardsDelete(id) {
-  return getInitialCards(`${config.baseUrl}/cards/${id}`, {
+  return fetch(`${config.baseUrl}/cards/${id}`, {
     method: 'DELETE', 
     headers: config.headers
   })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 }
 
 function deleteLike(id) {
-  return getInitialCards(`${config.baseUrl}/cards/likes/${id}`, {
+  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
     method: 'DELETE', 
     headers: config.headers
   })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 }
 
 function avatarPatch(avatar) {
-  return getInitialCards(`${config.baseUrl}/users/me/avatar`, {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH', 
     headers: config.headers,
     body: JSON.stringify({
       avatar: avatar
     })
   })
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 }
 
-export {userGet, getInitialCards, cardsGet, cardsPost, userPatch, cardsDelete, addLike, deleteLike, avatarPatch}
+export {userGet, cardsGet, cardsPost, userPatch, cardsDelete, addLike, deleteLike, avatarPatch};
