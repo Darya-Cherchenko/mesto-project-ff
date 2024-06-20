@@ -1,9 +1,6 @@
 import { addLike, deleteLike} from './api';
-import { openModal } from './modal';
 
 const cardTemplate = document.querySelector('#card-template').content; 
-const deletePopup = document.querySelector('.popup_type_delete-card');
-
 
 function createCard (cardData, userId, onDelete, likeCard, openCard) {
   const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
@@ -41,10 +38,8 @@ function createCard (cardData, userId, onDelete, likeCard, openCard) {
 };
 
 function likeCard (evt, cardId){
-  // evt.target.classList.toggle('card__like-button_is-active');
-  let counterLikes = evt.target.parentNode.querySelector('.card__like-counter');
-  // let cardId = counterLikes.parentNode._id;
-  // console.log(cardId);
+  const counterLikes = evt.target.parentNode.querySelector('.card__like-counter');
+
   if (evt.target.classList.contains("card__like-button_is-active")) {
     deleteLike(cardId)
       .then((сard) => {
@@ -66,9 +61,4 @@ function likeCard (evt, cardId){
   }
 };
 
-function deleteCard(evt, cardId) {
-  openModal(deletePopup);
-  deletePopup.dataset.cardId = cardId;
-};
-
-export {createCard, deleteCard, likeCard};
+export {createCard, likeCard};

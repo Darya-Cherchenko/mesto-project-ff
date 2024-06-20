@@ -1,6 +1,6 @@
 import './pages/index.css';
 import { initialCards } from './components/cards.js';
-import { createCard, deleteCard, likeCard } from './components/card.js';
+import { createCard, likeCard } from './components/card.js';
 import { closeModalOverlay, openModal, closeModal } from './components/modal.js';
 import { enableValidation, clearValidation, validationConfig } from './components/validation.js';
 import { userGet, cardsGet, cardsPost, userPatch, cardsDelete, avatarPatch  } from './components/api.js';
@@ -35,6 +35,11 @@ enableValidation(validationConfig);
 
 const loading = (isLoading, button) => {
   button.textContent = isLoading ? "Сохранение..." : "Сохранить";
+};
+
+function deleteCard(evt, cardId) {
+  openModal(deletePopup);
+  deletePopup.dataset.cardId = cardId;
 };
 
 const openCard = (image)=>{
@@ -119,7 +124,7 @@ function renderInitialCards(cards) {
 }
 
 editButton.addEventListener('click', function(){
-    clearValidation(formProfile);
+    clearValidation(formProfile, validationConfig);
     openModal(editPopup);
     nameInput.value = titleProfile.textContent;
     jobInput.value = descriptionProfile.textContent; 
@@ -128,12 +133,12 @@ editButton.addEventListener('click', function(){
 editPopup.addEventListener('click', closeModalOverlay);
 
 newPlaceButton.addEventListener('click', function(){
-  clearValidation(formPlace);
+  clearValidation(formPlace, validationConfig);
   openModal(newPlacePopup);
 });
 
 userImage.addEventListener('click', () => {
-  clearValidation(formAvatar);
+  clearValidation(formAvatar, validationConfig);
   openModal(avatarPopup);
 })
 

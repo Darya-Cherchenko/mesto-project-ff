@@ -1,3 +1,5 @@
+import { checkResponse } from "./utils";
+
 const config = {
   baseUrl: 'https://nomoreparties.co/v1/wff-cohort-16',
   headers: {
@@ -11,12 +13,7 @@ function userGet() {
     method: 'GET', 
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 function cardsGet() {
@@ -24,12 +21,7 @@ function cardsGet() {
     method: 'GET', 
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 function userPatch(userInfo) {
@@ -41,12 +33,7 @@ function userPatch(userInfo) {
       about: userInfo.about
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 function cardsPost(cardInfo) {
@@ -58,12 +45,7 @@ function cardsPost(cardInfo) {
       link: cardInfo.link
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 function addLike(id) {
@@ -71,12 +53,7 @@ function addLike(id) {
     method: 'PUT', 
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 function cardsDelete(id) {
@@ -84,12 +61,7 @@ function cardsDelete(id) {
     method: 'DELETE', 
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 function deleteLike(id) {
@@ -97,12 +69,7 @@ function deleteLike(id) {
     method: 'DELETE', 
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 function avatarPatch(avatar) {
@@ -113,12 +80,7 @@ function avatarPatch(avatar) {
       avatar: avatar
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  .then(checkResponse);
 }
 
 export {userGet, cardsGet, cardsPost, userPatch, cardsDelete, addLike, deleteLike, avatarPatch};
